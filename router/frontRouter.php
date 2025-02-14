@@ -1,7 +1,7 @@
 <?php
 
 // Inclure le contrôleur
-require_once 'Controllers/ControllerUser.php';
+require_once __DIR__ . '/../controllers/ControllerUser.php';
 
 // Créer une instance du contrôleur
 $controller = new AuthController();
@@ -16,4 +16,8 @@ if ($action === 'register') {
 } elseif ($action === 'home'){
     $controller = new AuthController();
     $controller->login();
+}
+// deconnexion
+if ($action === 'logout') {
+    $controller->logout();
 }

@@ -1,5 +1,5 @@
 <?php
-require_once 'model/users.php';
+require_once __DIR__ . '/../model/users.php';
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
@@ -12,7 +12,6 @@ if ($action === 'register') {
 }
 
 class AuthController {
-    // montre le form 
     public function showLoginForm() {
         require 'View/Front/login.php';
     }
@@ -36,21 +35,19 @@ class AuthController {
                     // on verif le type de fichier
                     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
                     if (in_array($avatar['type'], $allowedTypes)) {
-                        // Définir le nom du fichier de l'image
                         $imageNom = uniqid() . "_" . basename($avatar['name']); // Utilisation de uniqid() pour éviter les conflits
                         $uploadDir = 'Upload/'; // fichier de stockage
                         $uploadFilePath = $uploadDir . $imageNom;   
     
                         // Déplacer l'image téléchargée vers le répertoire uploads/
                         if (move_uploaded_file($avatar['tmp_name'], $uploadFilePath)) {
-                            // download okk
                             $imagePath = $uploadFilePath; // Le chemin de l'image à enregistrer dans la base de données
                         } else {
                             echo "Erreur lors du téléchargement de l'image.";
                             return;
                         }
                     } else {
-                        echo "Le fichier téléchargé n'est pas une image valide.";
+                        echo "Le fichier téléchargé n'est pas valide.";
                         return;
                     }
                 } else {
@@ -92,21 +89,27 @@ class AuthController {
     
             if ($user && password_verify($password, $user['password'])) {
                 session_start();
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['nom'] = $user['nom']; // Stocker aux besoin
-                $_SESSION['droits'] = $user['droits']; // Vérif si admin 
-                header('Location: ./view/front/home.php'); // Redirection
+    
+                $_SESSION['user_id'] = $user['id_users']; 
+                $_SESSION['nom'] = $user['nom'];
+                $_SESSION['droits'] = $user['droits'];
+    
+                header("Location: ./view/front/home.php"); // Redirection après connexion
                 exit();
             } else {
                 echo "Identifiants incorrects.";
             }
         }
-    }    
+    }
+    
 
     public function logout() {
-        session_start();
-        session_destroy();
-        header('Location: ./view/front/home.php');
+        session_start(); // S'assurer que la session est bien démarrée
+        session_unset(); // Supprime toutes les variables de session
+        session_destroy(); // Détruit la session
+
+        // Rediriger vers la page de connexion ou d'accueil
+        header("Location: ../index.php");
         exit();
     }
 

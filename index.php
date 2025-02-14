@@ -24,7 +24,11 @@
 
 <?php
 session_start();
-require_once 'Router/FrontRouter.php'; // inclure le routeur
+require_once 'Router/FrontRouter.php'; 
+if (isset($_SESSION['user_id'])) {
+    header("Location: view/front/home.php");
+    exit();
+}
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 $controller = new AuthController();
