@@ -9,7 +9,7 @@
 </head>
 <body>
     <?php include '../template/header.php'; ?>
-    <?php include '../template/tarifs.php'; ?>
+    <?php include '../front/tarifs.php'; ?>
     <?php include '../template/footer.php'; ?>
 </body>
 </html>

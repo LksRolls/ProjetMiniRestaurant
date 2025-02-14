@@ -102,5 +102,20 @@ class AuthController {
             }
         }
     }    
+
+    public function logout() {
+        session_start();
+        session_destroy();
+        header('Location: ./view/front/home.php');
+        exit();
+    }
+
+    public function VerifAdmin() {
+        session_start();
+        if ($_SESSION['droits'] != 'admin') {
+            header('Location: ./view/front/home.php');
+            exit();
+        }
+    }
 }
 ?>

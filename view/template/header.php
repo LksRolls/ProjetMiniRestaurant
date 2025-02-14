@@ -17,12 +17,12 @@
 
         <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
           <li><a href="#" class="nav-link px-2">Accueil</a></li>
-          <li><a href="" class="nav-link px-2">Tarifs</a></li>
+          <li><a href="#" class="nav-link px-2">Tarifs</a></li>
           <li><a href="#" class="nav-link px-2 d-none">Administrations</a></li>
         </ul>
 
         <div class="col-md-3 text-end">
-          <a href="index.php?page=User" type="button" class="btn btn-outline-secondary me-2" id="userBtn">Profil</a>
+          <a href="header('Location: ./view/front/user.php')" type="button" class="btn btn-outline-secondary me-2" id="userBtn">Profil</a>
         </div>
   </header>
 </body>
