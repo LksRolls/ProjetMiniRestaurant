@@ -27,7 +27,7 @@ class AuthController {
                 $password = $_POST['password'];
                 $droits = $_POST['droits'];
                 
-                // Traite de l'avatar
+                // Traite de la photo
                 $avatar = $_FILES['avatar'];
     
                 // Vérifier si un fichier a été téléchargé

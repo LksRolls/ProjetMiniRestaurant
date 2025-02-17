@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
+<a href="../../router/frontRouter.php?action=logout" class="btn btn-secondary">Déconnexion</a>
+
 <form action="../../index.php?action=register" method="POST" enctype="multipart/form-data">
     <h2>Inscription</h2>
     <!-- Photo de profil -->

@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Vérifie si l'utilisateur est déjà sur la page de connexion pour éviter la boucle
 $current_page = basename($_SERVER['PHP_SELF']);
