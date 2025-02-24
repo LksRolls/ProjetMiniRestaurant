@@ -1,6 +1,6 @@
 /* ---- Universel ---- */
-body, *{
-    margin: 0;
+*{
+    margin: 0 !important; 
     padding: 0;
     text-align: center;
     font-family: Arial, sans-serif;
@@ -19,7 +19,6 @@ header {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     overflow-x: hidden;
-    position: fixed;
 }
 
 .HeadIcon {
@@ -85,4 +84,9 @@ header {
     .HeadButton {
         margin-top: 10px;
     }
+}
+
+/* ---- container ---- */
+.custom-padding{
+    padding-top: 50% !important;
 }

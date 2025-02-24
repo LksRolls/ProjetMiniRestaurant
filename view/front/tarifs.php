@@ -34,29 +34,30 @@ $stmt = $db->prepare($query);
 $stmt->execute([':id_carte' => $id_carte]);
 $tarifs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-<div id="Tarifs">
-    <h2>Tarifs des Prestations</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Type de prestation</th>
-                <th>Prix (€)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($tarifs) > 0): ?>
-                <?php foreach ($tarifs as $tarif) : ?>
-                    <tr>
-                        <td><?= htmlspecialchars($tarif['type_prestation']); ?></td>
-                        <td><?= number_format($tarif['prix'], 2, ',', ' '); ?> €</td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
+<section id="Tarifs">
+    <div class="container custom-padding">
+        <h2>Tarifs des Prestations</h2>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>Aucun tarif disponible.</td>
+                    <th class="col">Type de prestation</th>
+                    <th class="col">Prix (€)</th>
                 </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                <?php if (count($tarifs) > 0): ?>
+                    <?php foreach ($tarifs as $tarif) : ?>
+                        <tr>
+                            <td><?= htmlspecialchars($tarif['type_prestation']); ?></td>
+                            <td><?= number_format($tarif['prix'], 2, ',', ' '); ?> €</td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td>Aucun tarif disponible.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
