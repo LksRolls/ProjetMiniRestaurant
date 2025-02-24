@@ -12,14 +12,11 @@ $db = Database::getConnection();
 
 // Récupération des données depuis la base
 $tables = [
-    "usager" => "SELECT * FROM usager",
-    "users" => "SELECT us.*, dr.libelle_droits FROM users AS us INNER JOIN droits AS dr ON dr.id_droits=us.droits",
-    "ticket" => "SELECT * FROM ticket",
-    "tarif" => "SELECT * FROM tarif",
-    "prestation" => "SELECT * FROM prestation",
-    "depot" => "SELECT * FROM depot",
-    "categorie" => "SELECT * FROM categorie",
-    "achat" => "SELECT * FROM achat"
+    "categorie" => "SELECT * FROM categorie", 
+    "prestation" => "SELECT * FROM prestation", 
+    "tarif" => "SELECT * FROM tarif", 
+    "users" => "SELECT * FROM users",
+    "droit" => "SELECT * FROM droits"
 ];
 
 $data = [];
@@ -51,6 +48,9 @@ foreach ($tables as $name => $query) {
                         <?php foreach (array_keys($rows[0]) as $column): ?>
                             <th><?= ucfirst($column) ?></th>
                         <?php endforeach; ?>
+                        <th> Ajouter</th>
+                        <th> Supprimer</th>
+                        <th> Modifer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,6 +59,9 @@ foreach ($tables as $name => $query) {
                             <?php foreach ($row as $cell): ?>
                                 <td><?= htmlspecialchars($cell) ?></td>
                             <?php endforeach; ?>
+                            <td> <a href="../../controllers/controllerCRUD.php?action=Create&table=<?=ucfirst($tableName)?>">  Nouveau</a> </td>
+                            <td> <a href="../../controllers/controllerCRUD.php?action=Delete&table=<?=ucfirst($tableName)?>"> Enlever</a> </td>
+                            <td> <a href="../../controllers/controllerCRUD.php?action=Modify&table=<?=ucfirst($tableName)?>"> Modifer</a> </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
