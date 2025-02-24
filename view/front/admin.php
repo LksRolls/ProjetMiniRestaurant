@@ -1,5 +1,5 @@
 <?php
-// Vérifier si utilisateur est connecté et admin
+// Verif si utilisateur connecté et admin
 if (!isset($_SESSION['user_id']) || $_SESSION['droits'] != 1) {
     header("Location: ../../index.php?action=login");
     exit();
@@ -7,10 +7,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['droits'] != 1) {
 
 require_once '../../model/Bdd.php';
 
-// Connexion à la base de données
+// Connexion bdd
 $db = Database::getConnection();
 
-// Récupération des données depuis la base
+// Requete pour recup donnée
 $tables = [
     "categorie" => "SELECT * FROM categorie", 
     "prestation" => "SELECT * FROM prestation", 
@@ -19,6 +19,7 @@ $tables = [
     "droit" => "SELECT * FROM droits"
 ];
 
+// Donnée mise dans tableau pour affichage
 $data = [];
 foreach ($tables as $name => $query) {
     $data[$name] = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
@@ -48,20 +49,22 @@ foreach ($tables as $name => $query) {
                         <?php foreach (array_keys($rows[0]) as $column): ?>
                             <th><?= ucfirst($column) ?></th>
                         <?php endforeach; ?>
-                        <th> Ajouter</th>
-                        <th> Supprimer</th>
-                        <th> Modifer</th>
+                        <th>Supprimer</th>
+                        <th>Modifier</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <?php foreach ($row as $cell): ?>
+                            <?php foreach ($row as $key => $cell): ?>
                                 <td><?= htmlspecialchars($cell) ?></td>
                             <?php endforeach; ?>
-                            <td> <a href="../../controllers/controllerCRUD.php?action=Create&table=<?=ucfirst($tableName)?>">  Nouveau</a> </td>
-                            <td> <a href="../../controllers/controllerCRUD.php?action=Delete&table=<?=ucfirst($tableName)?>"> Enlever</a> </td>
-                            <td> <a href="../../controllers/controllerCRUD.php?action=Modify&table=<?=ucfirst($tableName)?>"> Modifer</a> </td>
+                            <td>
+                                <a href="crud/delete<?=ucfirst($tableName)?>.php?Id=<?=reset($row)?>" class="supprButton">Supprimer</a>
+                            </td>
+                            <td>
+                                <a href="crud/modify<?=ucfirst($tableName)?>.php?Id=<?=reset($row)?>" class="modifButton">Modifier</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -71,6 +74,7 @@ foreach ($tables as $name => $query) {
         <?php endif; ?>
     <?php endforeach; ?>
 </div>
+
 
 </body>
 </html>
