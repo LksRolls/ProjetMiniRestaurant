@@ -1,22 +1,23 @@
 <?php
 require_once '../../model/Bdd.php';
 
-// Connexion bdd
+// Connexion à la base de données
 $db = Database::getConnection();
 
-// Requete pour recup donnée
+// Requêtes pour récupérer les données
 $tables = [
     "categorie" => "SELECT * FROM categorie", 
     "prestation" => "SELECT * FROM prestation", 
     "tarif" => "SELECT * FROM tarif", 
     "users" => "SELECT * FROM users",
-    "droit" => "SELECT * FROM droits"
+    "droits" => "SELECT * FROM droits" // Correction du nom de la table
 ];
 
-// Donnée mise dans tableau pour affichage
+// Récupérer les données pour affichage
 $data = [];
 foreach ($tables as $name => $query) {
-    $data[$name] = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $db->query($query);
+    $data[$name] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 ?>
@@ -24,12 +25,12 @@ foreach ($tables as $name => $query) {
 <section id="admin">
     <h1>Vue d'Administration des Tables</h1>
 
-    <div class="container">
+    <div class="container w-95 mx-auto">
         <?php foreach ($data as $tableName => $rows): ?>
-            <h3>Table <?= ucfirst($tableName) ?></h3>
+            <h3 class="pt-3">Table <?= ucfirst($tableName) ?></h3>
             <?php if (count($rows) > 0): ?>
-                <table class="table">
-                    <button class="btn btn-primary m-3">Ajouter</button>
+                <table class="table table-responsive w-100">
+                    <a class="btn btn-success m-3" onclick="window.location.href='crud/create<?=ucfirst($tableName)?>.php'">Ajouter</a>
                     <thead>
                         <tr>
                             <?php foreach (array_keys($rows[0]) as $column): ?>
@@ -46,10 +47,10 @@ foreach ($tables as $name => $query) {
                                     <td><?= htmlspecialchars($cell) ?></td>
                                 <?php endforeach; ?>
                                 <td>
-                                    <a href="crud/delete<?=ucfirst($tableName)?>.php?Id=<?=reset($row)?>" class="supprButton">Supprimer</a>
+                                    <a class="btn btn-danger m-1" href="crud/delete<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Supprimer</a>
                                 </td>
                                 <td>
-                                    <a href="crud/modify<?=ucfirst($tableName)?>.php?Id=<?=reset($row)?>" class="modifButton">Modifier</a>
+                                    <a class="btn btn-warning m-1" href="crud/modify<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -57,6 +58,7 @@ foreach ($tables as $name => $query) {
                 </table>
             <?php else: ?>
                 <p>Aucune donnée disponible pour cette table.</p>
+                <button class="btn btn-primary" onclick="window.location.href='crud/create<?=ucfirst($tableName)?>.php'">Ajouter</button>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>

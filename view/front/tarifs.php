@@ -14,10 +14,13 @@ $stmt = $db->prepare($query);
 $stmt->execute([':id_users' => $_SESSION['user_id']]);
 $usager = $stmt->fetch(PDO::FETCH_ASSOC);
 
+/*
 if (!$usager) {
     echo "<p class='alert alert-danger text-center'>Aucun usager trouvé pour cet utilisateur.</p>";
     return;
 }
+Mauvais affichage, a voir plus tard
+*/
 
 $id_carte = $usager['id_carte'];
 
@@ -34,8 +37,9 @@ $stmt = $db->prepare($query);
 $stmt->execute([':id_carte' => $id_carte]);
 $tarifs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<section id="Tarifs">
-    <div class="container custom-padding">
+
+<section id="Tarifs" class="pt-5 mt-5">
+    <div class="container pt-5">
         <h2>Tarifs des Prestations</h2>
         <table class="table">
             <thead>

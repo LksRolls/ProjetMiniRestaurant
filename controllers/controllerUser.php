@@ -16,52 +16,34 @@ class AuthController {
         require 'View/Front/login.php';
     }
 
-    // fonction inscription
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['password'], $_POST['droits'], $_FILES['avatar'])) {
-                // Recup les données
+            if (isset($_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['password'], $_POST['droits'])) {
                 $nom = $_POST['nom'];
                 $prenom = $_POST['prenom'];
                 $email = $_POST['mail'];
                 $password = $_POST['password'];
                 $droits = $_POST['droits'];
-                
-                // Traite de la photo
-                $avatar = $_FILES['avatar'];
+                $imagePath = 'Upload/default.png'; // Image defaut au cas ou probleme
     
-                // Vérifier si un fichier a été téléchargé
-                if ($avatar['error'] == 0) {
-                    // on verif le type de fichier
-                    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                    if (in_array($avatar['type'], $allowedTypes)) {
-                        $imageNom = uniqid() . "_" . basename($avatar['name']); // Utilisation de uniqid() pour éviter les conflits
-                        $uploadDir = 'Upload/'; // fichier de stockage
-                        $uploadFilePath = $uploadDir . $imageNom;   
-    
-                        // Déplacer l'image téléchargée vers le répertoire uploads/
-                        if (move_uploaded_file($avatar['tmp_name'], $uploadFilePath)) {
-                            $imagePath = $uploadFilePath; // Le chemin de l'image à enregistrer dans la base de données
-                        } else {
-                            echo "Erreur lors du téléchargement de l'image.";
-                            return;
-                        }
-                    } else {
-                        echo "Le fichier téléchargé n'est pas valide.";
-                        return;
-                    }
-                } else {
-                    // Si aucun fichier est téléchargé,pas mettre d'image 
-                    $imagePath = null;
+                if (isset($_FILES['avatar'])) {
+                    $avatar = $_FILES['avatar'];
+                    $imageNom = uniqid() . "_" . basename($avatar['name']);
+                    $uploadDir = __DIR__ . '/../Upload/';
+                    $uploadFilePath = $uploadDir . $imageNom;
+                    move_uploaded_file($avatar['tmp_name'], $uploadFilePath);
+                    $imagePath = 'Upload/' . $imageNom;
                 }
     
-                // on hash le mdp 
+                // Hash du mdp
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
-                // inscrit le compte et lien pour se co 
+                // Creation de l'user avec model/users.php 
                 $userModel = new User();
                 if ($userModel->createUser($nom, $prenom, $email, $hashedPassword, $droits, $imagePath)) {
-                    echo "Inscription réussie ! <a href='../index.php'>Connectez-vous ici</a>";
+                    // redirection direct pour pas creer plusieurs fois
+                    header("Location: ./index.php");
+                    exit();
                 } else {
                     echo "Erreur lors de l'inscription.";
                 }
@@ -71,29 +53,29 @@ class AuthController {
         }
     }
     
-    
 
-    // Traiter la connexion
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = trim($_POST['mail']); 
             $password = $_POST['password'];
-    
+
             if (empty($email) || empty($password)) {
                 echo "Tous les champs sont requis.";
                 return;
             }
-    
+
             $userModel = new User();
             $user = $userModel->getUserByEmail($email);
-    
+
             if ($user && password_verify($password, $user['password'])) {
                 session_start();
-    
-                $_SESSION['user_id'] = $user['id_users']; 
-                $_SESSION['nom'] = $user['nom'];
+                $_SESSION['user_id'] = $user['id_users'];
+                $_SESSION['mail'] = $user['mail'];
+                $_SESSION['avatar'] = !empty($user['avatar']) ? $user['avatar'] : "Upload/default.png";
                 $_SESSION['droits'] = $user['droits'];
-    
+                $_SESSION['nom'] = $user['nom'];
+                $_SESSION['prenom'] = $user['prenom'];
+
                 header("Location: ./view/front/home.php"); // Redirection après connexion
                 exit();
             } else {
@@ -101,14 +83,11 @@ class AuthController {
             }
         }
     }
-    
 
     public function logout() {
-        session_start(); // S'assurer que la session est bien démarrée
-        session_unset(); // Supprime toutes les variables de session
-        session_destroy(); // Détruit la session
-
-        // Rediriger vers la page de connexion ou d'accueil
+        session_start();
+        session_unset();
+        session_destroy();
         header("Location: ../index.php");
         exit();
     }

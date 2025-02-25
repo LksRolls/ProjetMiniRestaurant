@@ -8,36 +8,38 @@ class User {
         $this->db = Database::getConnection();
     }
 
-    public function getUserByEmail($email) {
+    public function createUser($nom, $prenom, $email, $hashedPassword, $droits, $avatar = null) {
         try {
-            $query = "SELECT * FROM users WHERE mail = :mail";
-            $stmt = $this->db->prepare($query);
-            $stmt->execute([':mail' => $email]);
-            return $stmt->fetch(PDO::FETCH_ASSOC); // Retourne les infos de l'utilisateur si trouvé
-        } catch (PDOException $e) {
-            echo "Erreur PDO : " . $e->getMessage();
-            return false;
-        }
-    }   
-
-
-    // Crée un nouvel utilisateur
-    public function createUser($nom, $prenom, $email, $hashedPassword, $droits) {
-        try {
-            $query = "INSERT INTO users (nom, prenom, mail, password, droits) VALUES (:nom, :prenom, :mail, :password, :droits)";
+            $query = "INSERT INTO users (nom, prenom, mail, password, droits, avatar) 
+                      VALUES (:nom, :prenom, :mail, :password, :droits, :avatar)";
+            
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 ':nom' => $nom,
                 ':prenom' => $prenom,
                 ':mail' => $email,
                 ':password' => $hashedPassword,
-                ':droits' => $droits
+                ':droits' => $droits,
+                ':avatar' => $avatar  
             ]);
+
             return true;
         } catch (PDOException $e) {
             echo "Erreur PDO : " . $e->getMessage(); 
             return false;
         }
-    }   
+    }
+
+    public function getUserByEmail($email) {
+        try {
+            $query = "SELECT * FROM users WHERE mail = :mail";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([':mail' => $email]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Erreur PDO : " . $e->getMessage();
+            return false;
+        }
+    }
 }
 ?>

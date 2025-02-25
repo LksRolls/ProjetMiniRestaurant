@@ -1,9 +1,11 @@
 <?php
 require_once '../model/Bdd.php';
 
-// Vérifier si l'action et la table sont bien envoyées
+session_start();
+
+// Verif si donnee min bien envoye
 if (!isset($_GET['action']) || !isset($_GET['table'])) {
-    header("Location: ../index.php?error=missing_params");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -11,41 +13,62 @@ $action = $_GET['action'];
 $table = $_GET['table'];
 $db = Database::getConnection();
 
-// Verif si bien modif
+// Verif que c'est bien modifeir pour etre sur qu'aucune erreur de redirection 
 if ($action !== "Modify") {
     header("Location: ../index.php");
     exit();
 }
 
-// Verif si table OK
+// verif table OK
 $validTables = ["categorie", "droits", "prestation", "tarif", "users"];
 if (!in_array($table, $validTables)) {
     header("Location: ../index.php");
     exit();
 }
 
-// Redirige
-updateEntry($db, $table);
-
-// modifie en fonction de la table
+// Modi en fonction de la table
 function updateEntry($db, $table) {
+    if (!isset($_POST['id'])) { 
+        header("Location: ../index.php");
+        exit();
+    }
+
+    $Id = intval($_POST['id']); // secur logiqueent l'id
+
     switch ($table) {
         case "categorie":
+            if (!isset($_POST['libelle_categorie'])) {
+                header("Location: ../index.php");
+                exit();
+            }
+
             $query = "UPDATE categorie SET libelle_categorie = :libelle WHERE id_categorie = :id";
-            $params = [":libelle" => $_POST['libelle_categorie'], ":id" => $_POST['id']];
+            $params = [":libelle" => $_POST['libelle_categorie'], ":id" => $Id];
             break;
 
         case "droits":
+            if (!isset($_POST['libelle_droits'])) {
+                header("Location: ../index.php");
+                exit();
+            }
             $query = "UPDATE droits SET libelle_droits = :libelle WHERE id_droits = :id";
-            $params = [":libelle" => $_POST['libelle_droits'], ":id" => $_POST['id']];
+            $params = [":libelle" => $_POST['libelle_droits'], ":id" => $Id];
             break;
 
         case "prestation":
+            if (!isset($_POST['type_prestation'])) {
+                header("Location: ../index.php");
+                exit();
+            }
             $query = "UPDATE prestation SET type_prestation = :type WHERE id_prestation = :id";
-            $params = [":type" => $_POST['type_prestation'], ":id" => $_POST['id']];
+            $params = [":type" => $_POST['type_prestation'], ":id" => $Id];
             break;
 
         case "tarif":
+            if (!isset($_POST['id_prestation'], $_POST['id_categorie'], $_POST['prix'])) {
+                header("Location: ../index.php");
+                exit();
+            }
             $query = "UPDATE tarif SET prix = :prix WHERE id_prestation = :id_prestation AND id_categorie = :id_categorie";
             $params = [
                 ":id_prestation" => $_POST['id_prestation'],
@@ -53,19 +76,43 @@ function updateEntry($db, $table) {
                 ":prix" => $_POST['prix']
             ];
             break;
+
+        case "users":
+            if (!isset($_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['droits'])) {
+                header("Location: ../index.php");
+                exit();
+            }
+
+            $query = "UPDATE users SET nom = :nom, prenom = :prenom, mail = :mail, droits = :droits WHERE id_users = :id";
+            $params = [
+                ":nom" => $_POST['nom'],
+                ":prenom" => $_POST['prenom'],
+                ":mail" => $_POST['mail'],
+                ":droits" => $_POST['droits'],
+                ":id" => $Id
+            ];
+            break;
+
+        default:
+            header("Location: ../index.php");
+            exit();
     }
 
-    executeQuery($db, $query, $params, "updated");
+    executeQuery($db, $query, $params);
 }
 
-// execute 
+// execute
+function executeQuery($db, $query, $params) {
     try {
         $stmt = $db->prepare($query);
         $stmt->execute($params);
-        header("Location: ../index.php?success=$successMessage");
+        header("Location: ../index.php");        
         exit();
     } catch (PDOException $e) {
-        header("Location: ../index.php?error=db_error");
+        header("Location: ../index.php");
         exit();
     }
-?>
+}
+
+// maj
+updateEntry($db, $table);
