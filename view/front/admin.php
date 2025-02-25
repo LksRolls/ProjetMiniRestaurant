@@ -1,6 +1,11 @@
 <?php
 require_once '../../model/Bdd.php';
 
+// verif que la personne a bien un droit
+$droits = isset($_SESSION['droits']) ? $_SESSION['droits'] : null;
+if ($droits !== 1) {
+    header("location: ../../view/front/home.php");
+}
 // Connexion à la base de données
 $db = Database::getConnection();
 
@@ -22,44 +27,52 @@ foreach ($tables as $name => $query) {
 
 ?>
 
-<section id="admin">
-    <h1>Vue d'Administration des Tables</h1>
+<section id="admin" class="container my-4 pt-5">
+    <h1 class="text-center mb-4 pt-5">Vue d'Administration des Tables</h1>
 
-    <div class="container w-95 mx-auto">
+    <div class="container w-100">
         <?php foreach ($data as $tableName => $rows): ?>
-            <h3 class="pt-3">Table <?= ucfirst($tableName) ?></h3>
-            <?php if (count($rows) > 0): ?>
-                <table class="table table-responsive w-100">
-                    <a class="btn btn-success m-3" onclick="window.location.href='crud/create<?=ucfirst($tableName)?>.php'">Ajouter</a>
-                    <thead>
-                        <tr>
-                            <?php foreach (array_keys($rows[0]) as $column): ?>
-                                <th class="col"><?= ucfirst($column) ?></th>
-                            <?php endforeach; ?>
-                            <th>Supprimer</th>
-                            <th>Modifier</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($rows as $row): ?>
+            <div class="d-flex justify-content-center">
+                <h3 class="pt-5"><?= ucfirst($tableName) ?></h3>
+                
+                <?php if (count($rows) > 0): ?>
+                    <a class="btn btn-success my-2" href="crud/new<?=ucfirst($tableName)?>.php">Ajouter</a>
+            </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover text-center align-middle">
+                        <thead class="table-dark">
                             <tr>
-                                <?php foreach ($row as $key => $cell): ?>
-                                    <td><?= htmlspecialchars($cell) ?></td>
+                                <?php foreach (array_keys($rows[0]) as $column): ?>
+                                    <th><?= ucfirst($column) ?></th>
                                 <?php endforeach; ?>
-                                <td>
-                                    <a class="btn btn-danger m-1" href="crud/delete<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Supprimer</a>
-                                </td>
-                                <td>
-                                    <a class="btn btn-warning m-1" href="crud/modify<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Modifier</a>
-                                </td>
+                                <th>Supprimer</th>
+                                <th>Modifier</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($rows as $row): ?>
+                                <tr>
+                                    <?php foreach ($row as $key => $cell): ?>
+                                        <td><?= htmlspecialchars($cell) ?></td>
+                                    <?php endforeach; ?>
+                                    <td>
+                                        <a class="btn btn-danger btn-sm" href="crud/delete<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Supprimer</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning btn-sm" href="crud/modify<?=ucfirst($tableName)?>.php?Id=<?= urlencode(reset($row)) ?>">Modifier</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
             <?php else: ?>
-                <p>Aucune donnée disponible pour cette table.</p>
+                <p class="text-danger">Aucune donnée disponible pour cette table.</p>
                 <button class="btn btn-primary" onclick="window.location.href='crud/create<?=ucfirst($tableName)?>.php'">Ajouter</button>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </section>
+

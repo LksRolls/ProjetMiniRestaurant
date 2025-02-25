@@ -37,31 +37,29 @@ $stmt = $db->prepare($query);
 $stmt->execute([':id_carte' => $id_carte]);
 $tarifs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-<section id="Tarifs" class="pt-5 mt-5">
-    <div class="container pt-5">
-        <h2>Tarifs des Prestations</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="col">Type de prestation</th>
-                    <th class="col">Prix (€)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($tarifs) > 0): ?>
-                    <?php foreach ($tarifs as $tarif) : ?>
-                        <tr>
-                            <td><?= htmlspecialchars($tarif['type_prestation']); ?></td>
-                            <td><?= number_format($tarif['prix'], 2, ',', ' '); ?> €</td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+<section class="container my-4 pt-5">
+    <h2 class="text-center mb-3 pt-5">Tarifs des Prestations</h2>
+    <table class="table table-bordered table-striped table-hover text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Type de prestation</th>
+                <th>Prix (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (count($tarifs) > 0): ?>
+                <?php foreach ($tarifs as $tarif) : ?>
                     <tr>
-                        <td>Aucun tarif disponible.</td>
+                        <td><?= htmlspecialchars($tarif['type_prestation']); ?></td>
+                        <td><?= number_format($tarif['prix'], 2, ',', ' '); ?> €</td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2" class="text-danger fw-bold">Aucun tarif disponible.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 </section>
+
