@@ -3,7 +3,7 @@ require_once '../../../model/Bdd.php';
 
 // Verif si ID dans URL
 if (!isset($_GET['Id'])) {
-    header("Location: ../../index.php?error=missing_id");
+    header("Location: ../../index.php");
     exit();
 }
 

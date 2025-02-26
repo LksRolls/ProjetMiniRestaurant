@@ -3,87 +3,106 @@ require_once '../model/Bdd.php';
 
 session_start();
 
-// verif si les id sont bien rempli
+// Vérifier que l'action et la table sont bien envoyées
 if (!isset($_GET['action']) || !isset($_GET['table'])) {
-    RedirigeAvecErreur("Il manque un paramètre");
+    header("Location: ../index.php");
+    exit();
 }
 
 $action = $_GET['action'];
 $table = $_GET['table'];
 $db = Database::getConnection();
 
-// verif si bien modifier
+// Vérifier que l'action est bien "Modify"
 if ($action !== "Modify") {
-    RedirigeAvecErreur("Erreur de redirection");
+    header("Location: ../index.php");
+    exit();
 }
 
-// verif table existe bien
+// Vérifier que la table est valide
 $validTables = ["categorie", "droits", "prestation", "tarif", "users"];
 if (!in_array($table, $validTables)) {
-    RedirigeAvecErreur("La table n'existe pas");
+    header("Location: ../index.php");
+    exit();
 }
 
-// requete en fonction de la table
+// Modifier en fonction de la table
 function updateEntry($db, $table) {
+    if (!isset($_POST['id'])) { 
+        header("Location: ../index.php");
+        exit();
+    }
+
+    $Id = intval($_POST['id']); // Sécuriser l'ID
+
     switch ($table) {
         case "categorie":
-            if (!isset($_POST['id'], $_POST['libelle_categorie'])) {
-                RedirigeAvecErreur("Erreur lors de la modification de categorie");
+            if (!isset($_POST['libelle_categorie'])) {
+                header("Location: ../index.php");
+                exit();
             }
+
             $query = "UPDATE categorie SET libelle_categorie = :libelle WHERE id_categorie = :id";
-            $params = [":libelle" => $_POST['libelle_categorie'], ":id" => intval($_POST['id'])];
+            $params = [":libelle" => $_POST['libelle_categorie'], ":id" => $Id];
             break;
 
         case "droits":
-            if (!isset($_POST['id'], $_POST['libelle_droits'])) {
-                RedirigeAvecErreur("Erreur lors de la modification du droit");
+            if (!isset($_POST['libelle_droits'])) {
+                header("Location: ../index.php");
+                exit();
             }
             $query = "UPDATE droits SET libelle_droits = :libelle WHERE id_droits = :id";
-            $params = [":libelle" => $_POST['libelle_droits'], ":id" => intval($_POST['id'])];
+            $params = [":libelle" => $_POST['libelle_droits'], ":id" => $Id];
             break;
 
         case "prestation":
-            if (!isset($_POST['id'], $_POST['type_prestation'])) {
-                RedirigeAvecErreur("Erreur lors de la modification de la prestation");
+            if (!isset($_POST['type_prestation'])) {
+                header("Location: ../index.php");
+                exit();
             }
             $query = "UPDATE prestation SET type_prestation = :type WHERE id_prestation = :id";
-            $params = [":type" => $_POST['type_prestation'], ":id" => intval($_POST['id'])];
+            $params = [":type" => $_POST['type_prestation'], ":id" => $Id];
             break;
 
         case "tarif":
             if (!isset($_POST['id_prestation'], $_POST['id_categorie'], $_POST['prix'])) {
-                RedirigeAvecErreur("Erreur lors de la modification du tarif");
+                header("Location: ../index.php");
+                exit();
             }
+            
             $query = "UPDATE tarif SET prix = :prix WHERE id_prestation = :id_prestation AND id_categorie = :id_categorie";
             $params = [
                 ":id_prestation" => intval($_POST['id_prestation']),
                 ":id_categorie" => intval($_POST['id_categorie']),
                 ":prix" => $_POST['prix']
             ];
-            break;
+            break;            
 
         case "users":
-            if (!isset($_POST['id'], $_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['droits'])) {
-                RedirigeAvecErreur("Erreur lors de la modification de l'user");
+            if (!isset($_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['droits'])) {
+                header("Location: ../index.php");
+                exit();
             }
+
             $query = "UPDATE users SET nom = :nom, prenom = :prenom, mail = :mail, droits = :droits WHERE id_users = :id";
             $params = [
                 ":nom" => $_POST['nom'],
                 ":prenom" => $_POST['prenom'],
                 ":mail" => $_POST['mail'],
-                ":droits" => intval($_POST['droits']),
-                ":id" => intval($_POST['id'])
+                ":droits" => $_POST['droits'],
+                ":id" => $Id
             ];
             break;
 
         default:
-            RedirigeAvecErreur("Table inconnue");
+            header("Location: ../index.php");
+            exit();
     }
 
     executeQuery($db, $query, $params);
 }
 
-// exec requet
+// ✅ Exécuter la mise à jour
 function executeQuery($db, $query, $params) {
     try {
         $stmt = $db->prepare($query);
@@ -91,15 +110,10 @@ function executeQuery($db, $query, $params) {
         header("Location: ../index.php");        
         exit();
     } catch (PDOException $e) {
-        RedirigeAvecErreur("Erreur lors de l'insertion en bdd");
+        header("Location: ../index.php");
+        exit();
     }
 }
 
-// pour rediriger avec le message d'erreur pour prevenir utilisateur
-function RedirigeAvecErreur($message) {
-    header("Location: ../view/front/home.php?error=" . $message);
-    exit();
-}
-
-// maj 
+// ✅ Lancer la mise à jour
 updateEntry($db, $table);

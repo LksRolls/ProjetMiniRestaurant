@@ -1,9 +1,9 @@
 <?php
 require_once '../../../model/Bdd.php';
 
-// Verif si ID dans url
+// Verif si ID dans URL
 if (!isset($_GET['id_prestation']) || !isset($_GET['id_categorie'])) {
-    header("Location: ../../index.php?error=missing_id");
+    header("Location: ../../index.php");
     exit();
 }
 
@@ -23,8 +23,7 @@ $stmt->execute([
 $tarif = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$tarif) {
-    header("Location: ../../index.php?error=not_found");
-    exit();
+    header("Location: ../../index.php");
 }
 ?>
 
@@ -34,21 +33,30 @@ if (!$tarif) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un Tarif</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/styles/style.css">
 </head>
 <body>
-    <form action="../../../controllers/controllerModify.php?action=Modify&table=tarif" method="POST">
-        <h3>Modifier un Tarif</h3>
+    <div class="container mt-5">
+        <div class="card shadow-lg p-4">
+            <h3 class="text-center mb-4">Modifier un Tarif</h3>
 
-            <label for="id_prestation">ID Prestation :</label>
-            <input type="number" id="id_prestation" name="id_prestation" value="<?= htmlspecialchars($id_prestation) ?>" readonly>
+            <form action="../../../controllers/controllerModify.php?action=Modify&table=tarif" method="POST">
+                <input type="hidden" name="id_prestation" value="<?= htmlspecialchars($id_prestation) ?>">
+                <input type="hidden" name="id_categorie" value="<?= htmlspecialchars($id_categorie) ?>">
 
-            <label for="id_categorie">ID Catégorie :</label>
-            <input type="number" id="id_categorie" name="id_categorie" value="<?= htmlspecialchars($id_categorie) ?>" readonly>
+                <div class="mb-3">
+                    <label for="prix" class="form-label fw-bold">Prix :</label>
+                    <input type="text" id="prix" name="prix" value="<?= htmlspecialchars($tarif['prix']) ?>" class="form-control" required>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-info">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <label for="prix">Prix :</label>
-        <input type="text" id="prix" name="prix" value="<?= htmlspecialchars($tarif['prix']) ?>" required>
-
-        <button type="submit">Modifier</button>
-    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
