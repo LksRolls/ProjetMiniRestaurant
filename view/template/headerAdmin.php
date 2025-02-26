@@ -14,9 +14,9 @@ if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
       </a>
 
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="#Tarifs" class="nav-link px-2 link-dark">Acceuil</a></li>
-        <li><a href="#Tarifs" class="nav-link px-2 link-dark">Tarifs</a></li>
-        <li><a href="#Admins" class="nav-link px-2 link-dark">Admin</a></li>
+        <li><a href="./home.php#Tarifs" class="nav-link px-2 link-dark">Acceuil</a></li>
+        <li><a href="./home.php#Tarifs" class="nav-link px-2 link-dark">Tarifs</a></li>
+        <li><a href="./home.php#admin" class="nav-link px-2 link-dark">Admin</a></li>
       </ul>
 
       <div class="col-md-3 text-end">

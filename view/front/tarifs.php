@@ -37,7 +37,7 @@ $stmt = $db->prepare($query);
 $stmt->execute([':id_carte' => $id_carte]);
 $tarifs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<section class="container my-4 pt-5">
+<section class="container my-4 pt-5" id="Tarifs">
     <h2 class="text-center mb-3 pt-5">Tarifs des Prestations</h2>
     <table class="table table-bordered table-striped table-hover text-center align-middle">
         <thead class="table-dark">
