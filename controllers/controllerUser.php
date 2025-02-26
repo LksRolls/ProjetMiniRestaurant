@@ -45,10 +45,8 @@ class AuthController {
                     header("Location: ./index.php");
                     exit();
                 } else {
-                    echo "Erreur lors de l'inscription.";
                 }
             } else {
-                echo "Tous les champs sont requis.";
             }
         }
     }
@@ -60,7 +58,6 @@ class AuthController {
             $password = $_POST['password'];
 
             if (empty($email) || empty($password)) {
-                echo "Tous les champs sont requis.";
                 return;
             }
 
@@ -79,7 +76,6 @@ class AuthController {
                 header("Location: ./view/front/home.php"); // Redirection après connexion
                 exit();
             } else {
-                echo "Identifiants incorrects.";
             }
         }
     }

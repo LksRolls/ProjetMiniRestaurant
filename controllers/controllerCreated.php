@@ -3,68 +3,72 @@ require_once '../model/Bdd.php';
 
 session_start();
 
-// Verif si donnee min bien envoye
+// Vérifier si l'action et la table sont bien envoyées
 if (!isset($_GET['action']) || !isset($_GET['table'])) {
-    header("Location: ../index.php");
-    exit();
+    RedirigeAvecErreur("Un parametre est manquant");
 }
 
 $action = $_GET['action'];
 $table = $_GET['table'];
 $db = Database::getConnection();
 
-// Verif que c'est bien creer pour etre sur qu'aucune erreur de redirection 
+// Vérifier que l'action est bien "Created"
 if ($action !== "Created") {
-    header("Location: ../index.php");
-    exit();
+    RedirigeAvecErreur("Erreur de redirection");
 }
 
-// verif table OK
+// Verif si table valide    
 $validTables = ["categorie", "droits", "prestation", "tarif", "users"];
 if (!in_array($table, $validTables)) {
-    header("Location: ../index.php");
-    exit();
+    RedirigeAvecErreur("La table n'existe pas");
 }
 
-// creer en fonction de la table
+// insere en fonction de la table
 function insertEntry($db, $table) {
     switch ($table) {
         case "categorie":
             if (!isset($_POST['libelle_categorie'])) {
-                header("Location: ../index.php");
-                exit();
+                RedirigeAvecErreur("Erreur lors de l'insertion ( Verifier que tous les champs soit remplit )");
             }
-
             $query = "INSERT INTO categorie (libelle_categorie) VALUES (:libelle)";
             $params = [":libelle" => $_POST['libelle_categorie']];
             break;
 
         case "droits":
             if (!isset($_POST['libelle_droits'])) {
-                header("Location: ../index.php");
-                exit();
+                RedirigeAvecErreur("Erreur lors de l'insertion ( Verifier que tous les champs soit remplit )");
             }
-
             $query = "INSERT INTO droits (libelle_droits) VALUES (:libelle)";
             $params = [":libelle" => $_POST['libelle_droits']];
             break;
 
         case "prestation":
             if (!isset($_POST['type_prestation'])) {
-                header("Location: ../index.php");
-                exit();
+                RedirigeAvecErreur("Erreur lors de l'insertion ( Verifier que tous les champs soit remplit )");
             }
-
             $query = "INSERT INTO prestation (type_prestation) VALUES (:type)";
             $params = [":type" => $_POST['type_prestation']];
             break;
 
         case "tarif":
             if (!isset($_POST['id_prestation'], $_POST['id_categorie'], $_POST['prix'])) {
-                header("Location: ../index.php");
-                exit();
+                RedirigeAvecErreur("Erreur lors de l'insertion ( Verifier que tous les champs soit remplit )");
             }
 
+            // Verif si existe
+            $checkQuery = "SELECT COUNT(*) FROM tarif WHERE id_prestation = :id_prestation AND id_categorie = :id_categorie";
+            $checkStmt = $db->prepare($checkQuery);
+            $checkStmt->execute([
+                ":id_prestation" => $_POST['id_prestation'],
+                ":id_categorie" => $_POST['id_categorie']
+            ]);
+            $exists = $checkStmt->fetchColumn();
+
+            if ($exists > 0) {
+                RedirigeAvecErreur("Ce tarif existe deja, merci de le modifier ou de le supprimer");
+            }
+
+            // Insere si existe pas logique
             $query = "INSERT INTO tarif (id_prestation, id_categorie, prix) VALUES (:id_prestation, :id_categorie, :prix)";
             $params = [
                 ":id_prestation" => $_POST['id_prestation'],
@@ -74,14 +78,13 @@ function insertEntry($db, $table) {
             break;
 
         default:
-            header("Location: ../index.php");
-            exit();
+            RedirigeAvecErreur("Table invalide.");
     }
 
     executeQuery($db, $query, $params);
 }
 
-// execute
+// Execute
 function executeQuery($db, $query, $params) {
     try {
         $stmt = $db->prepare($query);
@@ -89,11 +92,16 @@ function executeQuery($db, $query, $params) {
         header("Location: ../index.php");
         exit();
     } catch (PDOException $e) {
-        header("Location: ../index.php"); 
-        exit();
+        RedirigeAvecErreur("Erreur lors de l'insertion en bdd");
     }
 }
 
-// amj
+// pour rediriger avec le message d'erreur pour prevenir utilisateur
+function RedirigeAvecErreur($message) {
+    header("Location: ../view/front/home.php?error=" . $message);
+    exit();
+}
+
+// execut
 insertEntry($db, $table);
 ?>
