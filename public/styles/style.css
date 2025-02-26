@@ -9,7 +9,13 @@ header a img{
     margin-left: 5%;
 }
 
+/* ----- Bouton ----- */
+.btn-primary {
+    background-color: rgb(13, 141, 141) !important; 
+    border: none !important;
+}
 
-#Tarifs{
-    padding-top: 0% !important;
+.btn-primary:hover {
+    background-color: rgb(13, 141, 141) !important;
+    border-color: none !important;
 }

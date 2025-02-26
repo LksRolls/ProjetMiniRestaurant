@@ -20,8 +20,8 @@ if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
       </ul>
 
       <div class="col-md-3 text-end">
-        <a class="btn btn-primary m-3" href="user.php" type="button" id="Button">Profil</a>
-        <a class="btn btn-primary m-3" href="../../router/frontRouter.php?action=logout" type="button" id="Button">Déconnexion</a>
+        <a class="btn btn-info m-3" href="user.php" type="button" id="Button">Profil</a>
+        <a class="btn btn-info m-3" href="../../router/frontRouter.php?action=logout" type="button" id="Button">Déconnexion</a>
 
       </div>
     </header>

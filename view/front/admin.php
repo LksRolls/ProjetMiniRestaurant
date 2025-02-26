@@ -32,11 +32,11 @@ foreach ($tables as $name => $query) {
 
     <div class="container w-100">
         <?php foreach ($data as $tableName => $rows): ?>
-            <div class="d-flex justify-content-center">
+            <div class="text-center">
                 <h3 class="pt-5"><?= ucfirst($tableName) ?></h3>
                 
                 <?php if (count($rows) > 0): ?>
-                    <a class="btn btn-success my-2" href="crud/new<?=ucfirst($tableName)?>.php">Ajouter</a>
+                    <a class="btn btn-success my-4" href="crud/new<?=ucfirst($tableName)?>.php">Ajouter</a>
             </div>
 
                 <div class="table-responsive">
